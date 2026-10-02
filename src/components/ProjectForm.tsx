@@ -12,7 +12,7 @@ export function ProjectForm({ initial = empty, pending, error, onSubmit, onCance
     <label>Project name<input required maxLength={120} autoFocus value={input.name} onChange={e => field('name', e.target.value)} placeholder="Your next great idea" /></label>
     <label>Description<textarea maxLength={2000} value={input.description} onChange={e => field('description', e.target.value)} placeholder="What are you building?" rows={2} /></label>
     <label>GitHub repository<input required type="url" value={input.repositoryUrl} onChange={e => field('repositoryUrl', e.target.value)} placeholder="https://github.com/owner/repository" /></label>
-    <p className="field-note">Verify access from the project dashboard after saving. The repository must have an initial commit on its default branch.</p>
+    <p className="field-note">Verify access from the project dashboard after saving. Buildra automatically creates a README and the first commit when the repository is empty.</p>
     <label>Default branch<input required maxLength={200} value={input.defaultBranch} onChange={e => field('defaultBranch', e.target.value)} /></label>
     <label>Project instructions <span className="muted">· optional</span><textarea maxLength={20000} value={input.instructions} onChange={e => field('instructions', e.target.value)} placeholder="Architecture, conventions, and what your team should know." rows={4} /></label>
     <label>Docker test image<input required value={input.testImage ?? 'node:24-alpine'} onChange={e => field('testImage', e.target.value)} /></label>
