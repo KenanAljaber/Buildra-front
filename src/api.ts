@@ -16,7 +16,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     const problem = await response.json().catch(() => null)
     throw new Error(problem?.detail || 'Unable to reach Buildra. Check that the API and database are running.')
   }
-  return response.status === 204 ? undefined as T : response.json()
+  const body = await response.text()
+  return body.trim() ? JSON.parse(body) as T : undefined as T
 }
 export const api = {
   projects: () => request<Project[]>('/projects'),

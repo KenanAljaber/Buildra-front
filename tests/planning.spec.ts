@@ -38,4 +38,5 @@ test('failed PM run offers retry and preserves request', async ({ page }) => {
   await expect(page.getByText('OpenAI is not configured.')).toBeVisible()
   await page.getByRole('button', { name: 'Retry request' }).click()
   await expect(page.getByRole('status')).toContainText('Request queued')
+  await expect(page.getByRole('alert')).toHaveCount(0)
 })
