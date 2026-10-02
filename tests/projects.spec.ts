@@ -11,6 +11,7 @@ test('project creation opens the assigned team dashboard', async ({ page }) => {
   await page.route('**/api/projects/project-1', route => route.fulfill({ json: { project, team: [
     { id: 'pm', name: 'Sarah', role: 'ProductManager' }, { id: 'dev', name: 'Alex', role: 'Developer' }, { id: 'review', name: 'Daniel', role: 'Reviewer' },
   ] } }))
+  await page.route('**/api/projects/project-1/planning/', route => route.fulfill({ json: { messages: [], tasks: [], runs: [] } }))
   await page.goto('/projects')
   await expect(page.getByText('Every great product starts here.')).toBeVisible()
   await page.getByRole('button', { name: 'New project', exact: true }).click()
