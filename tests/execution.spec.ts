@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+test.beforeEach(async ({ page }) => { await page.route('**/api/status', route => route.fulfill({ json: { workerOnline: true, lastHeartbeat: new Date().toISOString() } })) })
+
 test('repository verification enables execution and exposes reviewed PR history', async ({ page }) => {
   const project = { id: 'project-1', name: 'Snake', description: '', repositoryUrl: 'https://github.com/owner/repo', defaultBranch: 'main', instructions: '', createdAt: '2026-10-02T10:00:00Z', repositoryVerifiedAt: null as string | null }
   const task = { id: 'task-1', title: 'Add snake movement', description: 'Implement movement.', acceptanceCriteria: 'Movement tests pass.', status: 'Ready', createdAt: project.createdAt, branch: 'buildra/task-1', commit: 'abcdef1234567890', pullRequestUrl: '' }
@@ -28,8 +30,9 @@ test('repository verification enables execution and exposes reviewed PR history'
   task.pullRequestUrl = 'https://github.com/owner/repo/pull/1'
   await expect(page.getByRole('link', { name: 'Open reviewed pull request' })).toHaveAttribute('href', task.pullRequestUrl)
   await page.getByRole('button', { name: 'View implementation history' }).click()
+  await page.getByRole('tab', { name: 'Reviews', exact: true }).click()
   await expect(page.getByText('Movement and independent tests pass.')).toBeVisible()
-  await page.getByText('Tool activity (1)', { exact: true }).click()
-  await expect(page.locator('.task-details details')).toContainText('Tests passed.')
+  await page.getByRole('tab', { name: 'Activity', exact: true }).click()
+  await expect(page.locator('.activity-event')).toContainText('Tests passed.')
   await expect(page.getByText('runTests', { exact: true })).toBeVisible()
 })

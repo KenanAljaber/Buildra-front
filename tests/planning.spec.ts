@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+test.beforeEach(async ({ page }) => { await page.route('**/api/status', route => route.fulfill({ json: { workerOnline: true, lastHeartbeat: new Date().toISOString() } })) })
+
 test('request transitions from queued to a persisted PM task', async ({ page }) => {
   const project = { id: 'project-1', name: 'Editra', description: '', repositoryUrl: 'https://github.com/owner/repo', defaultBranch: 'main', instructions: '', createdAt: '2026-10-02T10:00:00Z' }
   let submitted = false

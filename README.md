@@ -21,6 +21,8 @@ Open http://127.0.0.1:5174/projects. The default dev port is 5173; API calls are
 - Queued/running/completed/failed agent runs, token usage, safe error messages, and retry.
 - GitHub repository verification, task implementation/retry, review and tool history, and reviewed pull request links.
 - Owner-configured Docker test image/command and optional automatic implementation of future planned tasks.
+- Live agent cards show current actions, step counts, and automatic recoveries. Worker connectivity comes from a persisted heartbeat, with automatic reconnect and manual refresh.
+- Running tasks expose a workflow stage indicator and recent tool timeline. Expanded history has Activity, Reviews, and Branch tabs.
 - Persisted state is polled every two seconds; reload preserves conversation and tasks.
 
 Configure an OpenAI key on the worker before sending real requests. Without a key, the worker returns a visible configuration error; the request can be retried after setup. Verify your repository before starting a Ready task. GitHub access uses Git Credential Manager on the worker machine, and verification creates the first README commit automatically for empty repositories. Existing repositories need the configured base branch. See the backend README for worker setup and Docker test requirements. The default test setup targets dependency-free Node projects; other stacks require a suitable prebuilt image. Successful review creates a PR for your inspection and manual merge.

@@ -7,11 +7,11 @@ export type ProjectInput = Omit<Project, 'id' | 'createdAt' | 'repositoryVerifie
 export type Agent = { id: string; name: string; role: 'ProductManager' | 'Developer' | 'Reviewer'; modelProfile: string }
 export type ProjectDetails = { project: Project; team: Agent[] }
 export type Message = { id: string; senderId?: string; senderType: 'User' | 'Agent' | 'System'; content: string; messageType: string; createdAt: string }
-export type AgentRun = { id: string; agentDefinitionId?: string; status: 'Queued' | 'Running' | 'Completed' | 'Failed' | 'Cancelled' | 'WaitingForTool'; model: string; inputTokens: number; outputTokens: number; error: string | null; taskId: string | null }
+export type AgentRun = { id: string; agentDefinitionId?: string; status: 'Queued' | 'Running' | 'Completed' | 'Failed' | 'Cancelled' | 'WaitingForTool'; model: string; inputTokens: number; outputTokens: number; error: string | null; taskId: string | null; activity?: string; updatedAt?: string; startedAt?: string; step?: number; recoveries?: number }
 export type DevelopmentTask = { id: string; title: string; description: string; acceptanceCriteria: string; status: string; createdAt: string; branch?: string | null; commit?: string | null; pullRequestUrl?: string | null }
 export type ExecutionJob = { id: string; taskId: string; status: string; error?: string | null }
 export type Review = { id: string; status: string; summary: string }
-export type ToolExecution = { id: string; tool: string; summary: string; succeeded: boolean }
+export type ToolExecution = { id: string; agentRunId?: string; occurredAt?: string; tool: string; summary: string; succeeded: boolean }
 export type TaskExecutionDetails = { task: DevelopmentTask; reviews: Review[]; runs: AgentRun[]; tools: ToolExecution[]; job: ExecutionJob | null }
 export type PlanningWorkspace = { messages: Message[]; tasks: DevelopmentTask[]; runs: AgentRun[]; executionJobs?: ExecutionJob[] }
 
@@ -25,6 +25,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return body.trim() ? JSON.parse(body) as T : undefined as T
 }
 export const api = {
+  status: () => request<{ workerOnline: boolean; lastHeartbeat: string | null }>('/status'),
   projects: () => request<Project[]>('/projects'),
   project: (id: string) => request<ProjectDetails>(`/projects/${id}`),
   create: (input: ProjectInput) => request<Project>('/projects', { method: 'POST', body: JSON.stringify(input) }),

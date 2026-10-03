@@ -6,9 +6,10 @@ import { api } from './api'
 import type { ProjectInput } from './api'
 import { ProjectForm } from './components/ProjectForm'
 import { PlanningPanel } from './components/PlanningPanel'
+import { LiveTeam } from './components/LiveTeam'
 
 const client = new QueryClient({ defaultOptions: { queries: { retry: 1 } } })
-const roleNames = { ProductManager: 'Product Manager', Developer: 'Developer', Reviewer: 'Reviewer' }
+
 function Shell() {
   return <div className="app"><aside className="sidebar">
     <Link to="/projects" className="brand"><span className="brand-icon"><Boxes size={23}/></span>buildra<span className="brand-dot">.</span></Link>
@@ -52,7 +53,7 @@ function Dashboard() {
   return <main className="content"><Link to="/projects" className="back-link"><ArrowLeft size={15}/>All projects</Link><div className="page-heading"><div><p className="eyebrow">PROJECT OVERVIEW</p><h1>{project.name}</h1><p className="subtitle">{project.description || 'A new home for your next idea.'}</p></div><button className="secondary" onClick={() => { update.reset(); setEditing(true) }}><Settings2 size={16}/>Edit project</button></div>
     <div className="repository-panel"><div><span className="stat-icon"><FolderGit2 size={21}/></span><div><small>REPOSITORY</small><a href={project.repositoryUrl} target="_blank" rel="noreferrer">{new URL(project.repositoryUrl).pathname.slice(1)}<ArrowUpRight size={15}/></a></div></div><span className="branch"><GitBranch size={15}/>{project.defaultBranch}</span><span className="tag">{project.repositoryVerifiedAt ? 'Access verified' : 'Access not verified'}</span><button className="secondary" disabled={verify.isPending} onClick={() => verify.mutate()}>{verify.isPending ? 'Verifying…' : 'Verify repository'}</button></div>
     {verify.error && <p className="error" role="alert">{verify.error.message}</p>}
-    <div className="section-title"><h2>Your team</h2><span className="muted">Three roles. One shared goal.</span></div><div className="team-grid">{team.sort((a,b) => Object.keys(roleNames).indexOf(a.role) - Object.keys(roleNames).indexOf(b.role)).map(agent => <div className="team-card" key={agent.id}><span className={`agent-avatar ${agent.role}`}>{agent.name[0]}</span><h3>{agent.name}</h3><span>{roleNames[agent.role]}</span><p>{agent.role === 'ProductManager' ? 'Turns your requests into a clear plan.' : agent.role === 'Developer' ? 'Implements changes and validates the code.' : 'Reviews changes against acceptance criteria.'}</p><span className="assigned"><span className="online-dot"/>Assigned</span></div>)}</div>
+    <LiveTeam projectId={id} team={team}/>
     <PlanningPanel projectId={id} team={team} repositoryVerified={!!project.repositoryVerifiedAt}/>
     <section className="panel"><h2>Project context</h2><p className="instructions">{project.instructions || 'No project instructions yet. Add architecture notes and conventions to help your team understand the project.'}</p><div className="activity-item"><span className="online-dot"/><div>Project created<small>{new Date(project.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</small></div></div></section>
     <button className="text-danger" onClick={() => setDeleting(true)}>Delete project</button>

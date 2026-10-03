@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+test.beforeEach(async ({ page }) => { await page.route('**/api/status', route => route.fulfill({ json: { workerOnline: true, lastHeartbeat: new Date().toISOString() } })) })
+
 test('project creation opens the assigned team dashboard', async ({ page }) => {
   const project = { id: 'project-1', name: 'Editra', description: 'Video editing', repositoryUrl: 'https://github.com/owner/editra', defaultBranch: 'main', instructions: 'Keep changes focused.', createdAt: '2026-10-02T10:00:00Z' }
   await page.route('**/api/projects', async route => {
